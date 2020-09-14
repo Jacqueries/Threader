@@ -1,9 +1,9 @@
 """
-This script contains a function that directly codes for dynamic programming, and is meant to be imported into another script for use. In the event that it is called as a main, an example of how it works is outputted.
+This script contains a class that directly codes for dynamic programming, and is meant to be imported into another script for use. In the event that it is called as a main, an example of how it works is outputted.
 
 Usage:
     
-    import prog_dynam.py
+    from prog_dynam.py import *
 
 or
 
