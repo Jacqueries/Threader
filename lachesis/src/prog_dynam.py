@@ -34,7 +34,7 @@ class prog_dynam_matrix:
         self.col = len(self.columns)
     
     def create_content(self): #method that initialises the matrix
-        self.content = np.zeros((self.lin, self.col), dtype = int)
+        self.content = np.zeros((self.lin, self.col), dtype = float)
         
     def fill_up(self, score_mat, checkpoint = None):   #method that fills the matrix up
         if checkpoint == None:
@@ -42,7 +42,7 @@ class prog_dynam_matrix:
         gaps = score_mat['gap']
         for i in range(1, checkpoint[0]+1):
             for j in range(1, checkpoint[1]+1):
-                self.content[i, j] += max(score_mat[self.lines[i] + self.columns[j]]
+                self.content[i, j] += max(score_mat[self.columns[j] + str(self.lines[i])]
                                         + self.content[i-1, j-1], 
                                         self.content[i-1, j] + gaps, 
                                         self.content[i, j-1] + gaps)
@@ -51,7 +51,7 @@ class prog_dynam_matrix:
         else:
             for i in range(checkpoint[0], self.lin):
                 for j in range(checkpoint[1], self.col):
-                   self.content[i, j] += max(score_mat[self.lines[i] + self.columns[j]]
+                   self.content[i, j] += max(score_mat[self.columns[j] + str(self.lines[i])]
                                            + self.content[i-1, j-1], 
                                            self.content[i-1, j] + gaps, 
                                            self.content[i, j-1] + gaps)
@@ -77,6 +77,16 @@ class prog_dynam_matrix:
                 tmp = [tmp[0], tmp[1]-1]
             ver.append(tmp[0])
             hor.append(tmp[1])
+        if tmp != [0, 0] and tmp[0] == 0:
+            while tmp[1] != 0:
+                tmp[1] -= 1
+                ver.append('-')
+                hor.append(tmp[1])
+        elif tmp != [0,0] and tmp[1] == 0:
+            while tmp[0] != 0:
+                tmp[0] -= 1
+                hor.append('-')
+                ver.append(tmp[0])
         alignment = [[],[]]
         prev_ver = -1
         prev_hor = -1
@@ -85,11 +95,15 @@ class prog_dynam_matrix:
         for i in ver:
             if prev_ver == i:
                 alignment[0].append('-')
+            elif i == '-':
+                alignment[0].append('-')
             else:
-                alignment[0].append(self.lines[i])
+                alignment[0].append(str(self.lines[i]))
             prev_ver = i
         for i in hor:
             if prev_hor == i:
+                alignment[1].append('-')
+            elif i == '-':
                 alignment[1].append('-')
             else:
                 alignment[1].append(self.columns[i])

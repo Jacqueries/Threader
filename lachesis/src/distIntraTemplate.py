@@ -15,13 +15,32 @@ def dist_pos(pos1,pos2):
     return( math.sqrt( (pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2 + (pos1[2] - pos2[2])**2) )
 
 def create_DistMat(pos):
-    
-    npos = 10 #len(pos)
+    print(len(pos))
+    npos = len(pos)
     df = pd.DataFrame(np.zeros( (npos,npos) ) )
     for i in range(npos):
         for j in range(npos):
             df.iloc[i,j] = dist_pos(pos[i],pos[j])	
-    print(df)
+    return create_colmat(df)
+
+def which_col(dist, steps):
+    if dist < 0.25:
+        return 0
+    for i in range(len(steps)):
+        if dist >= steps[i] and dist < steps[i]+0.5:
+            return i 
+    return 29
+
+def create_colmat(df):
+    steps = []
+    cpos = len(df.iloc[0,:])
+    cdf = pd.DataFrame(np.zeros( (cpos,cpos) ), dtype=int )
+    for i in range(30):
+        steps.append(0.25 + i*0.5) 
+    for i in range(cpos):
+        for j in range(cpos):
+            cdf.iloc[i,j] = which_col(df.iloc[i,j], steps)
+    return cdf
 
 if __name__ == "__main__":
     pdbFile = sys.argv[1]
