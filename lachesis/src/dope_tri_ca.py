@@ -18,6 +18,11 @@ __date__ = "2020/09/12"
 import sys
 
 def extract_lines(dope_file):
+    """
+    function that extracts lines with "CA" in the DOPE.par file
+    arguments:
+        dope_file.par (a dope file)
+    """
     dope_ca_only = []
     with open(dope_file, "r") as filin:
         lines = filin.readlines()
@@ -27,6 +32,11 @@ def extract_lines(dope_file):
     return dope_ca_only
 
 def write_new_dope(new_dope_lines):
+    """
+    function that writes a new dope.par file
+    argument:
+        file_lines (a list of letters)
+    """
     with open("dope_ca_only.par", "w") as filout:
         for line in new_dope_lines:
             filout.write(line)

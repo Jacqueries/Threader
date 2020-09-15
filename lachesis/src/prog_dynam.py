@@ -36,10 +36,16 @@ class prog_dynam_matrix:
     def create_content(self): #method that initialises the matrix
         self.content = np.zeros((self.lin, self.col), dtype = int)
         
-    def fill_up(self, score_mat):   #method that fills the matrix up
+    def fill_up(self, score_mat, checkpoint):   #method that fills the matrix up
         gaps = score_mat['gap']
-        for i in range(1, self.lin):
-            for j in range(1, self.col):
+        for i in range(1, checkpoint[0]+1):
+            for j in range(1, checkpoint[1]+1):
+                self.content[i, j] += max(score_mat[self.lines[i] + self.columns[j]]
+                                        + self.content[i-1, j-1], 
+                                        self.content[i-1, j] + gaps, 
+                                        self.content[i, j-1] + gaps)
+        for i in range(checkpoint[0], self.lin):
+            for j in range(checkpoint[1], self.col):
                 self.content[i, j] += max(score_mat[self.lines[i] + self.columns[j]]
                                         + self.content[i-1, j-1], 
                                         self.content[i-1, j] + gaps, 
@@ -47,11 +53,12 @@ class prog_dynam_matrix:
                 if i == (self.lin-1) and j == (self.col-1):
                     self.output = self.content[i,j]
     
+    
     def optimal_path(self): #method that returns 1 POSSIBLE optimal path
         tmp = [self.lin-1, self.col-1]
         ver = [tmp[0]]
         hor = [tmp[1]]
-        while tmp != [0, 0] :
+        while tmp != [0, 0] and tmp[0] != 0 and tmp[1] != 0  :
             diag = self.content[tmp[0]-1, tmp[1]-1]
             up = self.content[tmp[0]-1, tmp[1]]
             left = self.content[tmp[0], tmp[1]-1]
@@ -86,7 +93,7 @@ class prog_dynam_matrix:
 
 
 if __name__ == "__main__":
-    data_series1 = ['A','A','A','A','T','T','T','T','G','C','C','C','C','C','C',
+    data_series1 = ['C','C','C','A','T','T','T','T','G','C','C','C','C','C','C',
                     'C','C','C','C','C']
     data_series2 = ['T','T','T','T','C','C','C','C','C','C','C','C','C','C','C',
                     'C']
@@ -94,9 +101,10 @@ if __name__ == "__main__":
                     'TA':2,'TT':4,'TG':1,'TC':0,
                     'GG':6,'GA':1,'GC':5,'GT':1,
                     'CA':1,'CC':5,'CT':0,'CG':5}
-    example1 = prog_dynam_matrix(data_series1, data_series2)
+    fixed_pos = [10,8]
+    example1 = prog_dynam_matrix(data_series2, data_series1)
     example1.create_content()
-    example1.fill_up(score_mat)
+    example1.fill_up(score_mat, fixed_pos)
     print("\nExample:\n")
     print("\nData set 1 :{}\nData set 2 :{}\nScore matrix :{}\n".format(data_series1,
             data_series2, score_mat))
