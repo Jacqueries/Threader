@@ -15,6 +15,11 @@ def dist_pos(pos1,pos2):
     return( math.sqrt( (pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2 + (pos1[2] - pos2[2])**2) )
 
 def create_DistMat(pos):
+    """
+        Create and return the distance matrix between positions
+        Args:
+            -pos: coordinates of all CA position in template
+    """
     print(len(pos))
     npos = len(pos)
     df = pd.DataFrame(np.zeros( (npos,npos) ) )
@@ -24,6 +29,12 @@ def create_DistMat(pos):
     return create_colmat(df)
 
 def which_col(dist, steps):
+    """
+        Return a column position in dopefile associated with the correct distance
+        Args:
+            -dist : the distance between 2 position
+	    -steps : number of columns in dopefile
+    """
     if dist < 0.25:
         return 0
     for i in range(len(steps)):
@@ -32,6 +43,11 @@ def which_col(dist, steps):
     return 29
 
 def create_colmat(df):
+    """
+        Create and return the column matrix that associate positions with dopefile columns
+        Args:
+            -df: matrix of distance
+    """
     steps = []
     cpos = len(df.iloc[0,:])
     cdf = pd.DataFrame(np.zeros( (cpos,cpos) ), dtype=int )

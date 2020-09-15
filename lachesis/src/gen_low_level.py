@@ -28,6 +28,13 @@ from readTarget import *
 import copy
 
 def generate_low(mat_col, query, dope_file):
+        """Generate all low level matrices
+    Args :
+	-query: sequence to thread
+	-dope_file: self expl
+	-mat_col: matrix that link distance and column in dope file
+    Return dictionnary in the form of key : AA_n°_position and value : alignment final score
+    """
     template_length = len(mat_col.iloc[0, :])
     mat_names = {'gap' : -2}
     for i,res in enumerate(query): #Fixing res in pos
@@ -44,12 +51,24 @@ def generate_low(mat_col, query, dope_file):
 
 
 def gen_low_score(res, i, pos, query, template_length, dope_file, mat_col):
+    """Position - residue pairing associated with corresponding dope score
+    Args :
+        -res: fixed res
+	-i: position of res in [query]
+	-pos: position in template 
+	-query: sequence to thread
+	-template_length: number of position 
+	-dope_file: self expl
+	-mat_col: matrix that link distance and column in dope file
+    Return dictionnary in the form of key : AA_n°_position and value : dope score
+	for an AA in a fixed position  
+    """
     query_copy = copy.deepcopy(query)
-    del query_copy[i]
-    output = {'gap':-2}
+    del query_copy[i] # unused
+    output = {'gap':-2} # command line
     with open(dope_file, "r") as filin:    
         lines = filin.readlines()
-        for line in lines:
+        for line in lines: # retreive all possible pairings with 20 aas 
             tmp = line.split()
             if tmp[0] == res[0:3]:
                 for j in range(template_length):
@@ -57,9 +76,12 @@ def gen_low_score(res, i, pos, query, template_length, dope_file, mat_col):
     return output
 
 if __name__ == '__main__':
-    template = pP.read_coord_PDB(sys.argv[1])
-    mat_col = create_DistMat(template)
-    print(mat_col)
-    query = readTargSeq(sys.argv[2])
-    generate_low(mat_col, query, sys.argv[3])
-    print("toto")
+    if len(sys.argv)>1 and sys.argv[1]=='help':
+        print(__doc__)
+    else:
+    	template = pP.read_coord_PDB(sys.argv[1])
+    	mat_col = create_DistMat(template)
+    	print(mat_col)
+    	query = readTargSeq(sys.argv[2])
+    	generate_low(mat_col, query, sys.argv[3])
+    
