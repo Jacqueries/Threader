@@ -40,34 +40,56 @@ class prog_dynam_matrix:
         if checkpoint == None:
             checkpoint = [self.lin-1, self.col-1]
         gaps = score_mat['gap']
-        for i in range(1, checkpoint[0]+1):
+        for i in range(1, checkpoint[0]+1): # Calculate the sub-matrix before the checkpoint
             for j in range(1, checkpoint[1]+1):
-                self.content[i, j] += max(score_mat[self.columns[j] + str(self.lines[i])]
-                                        + self.content[i-1, j-1], 
-                                        self.content[i-1, j] + gaps, 
-                                        self.content[i, j-1] + gaps)
-        if checkpoint == [self.lin-1, self.col-1]:
-            pass
-        else:
-            for i in range(checkpoint[0], self.lin):
-                for j in range(checkpoint[1], self.col):
-                   self.content[i, j] += max(score_mat[self.columns[j] + str(self.lines[i])]
+                if [i,j] == checkpoint: #If we are calculating for the checkpoint
+                    self.content[i, j] += max(self.content[i-1, j-1], # a 0 alignment score
+                                            self.content[i-1, j] + gaps, 
+                                            self.content[i, j-1] + gaps)
+                else:
+                    self.content[i, j] += max(score_mat[self.columns[j][0:3] + "_" + str(self.lines[i])]
+                                            + self.content[i-1, j-1], 
+                                            self.content[i-1, j] + gaps, 
+                                            self.content[i, j-1] + gaps)
+        for i in range(checkpoint[0], self.lin): # Calculate the sub-matrix after the checkpoint
+            for j in range(checkpoint[1], self.col):
+                if [i, j] == checkpoint: # To avoid passing the checkpoint twice
+                    continue
+                elif i == checkpoint[0]:
+                    self.content[i, j] += self.content[i, j-1]
+                elif j == checkpoint[1]:
+                    self.content[i, j] += self.content[i-1, j]
+                else:
+                    self.content[i, j] += max(score_mat[self.columns[j][0:3]  + "_" + str(self.lines[i])]
                                            + self.content[i-1, j-1], 
                                            self.content[i-1, j] + gaps, 
                                            self.content[i, j-1] + gaps)
-                   if i == (self.lin-1) and j == (self.col-1):
-                       self.output = self.content[i,j]
+                if i == (self.lin-1) and j == (self.col-1):
+                    self.output = self.content[i,j]
     
+    
+    def fill_high(self, score_mat):
+        gaps = score_mat['gap']
+        for i in range(1, self.lin):
+            for j in range(1, self.col):
+                self.content[i, j] += max(score_mat[self.columns[j]  
+                                          + "_" + str(self.lines[i])]
+                                          + self.content[i-1, j-1], 
+                                            self.content[i-1, j] + gaps, 
+                                            self.content[i, j-1] + gaps)
+                if i == (self.lin-1) and j == (self.col-1):
+                    self.output = self.content[i,j]                            
     
     def optimal_path(self): #method that returns 1 POSSIBLE optimal path
         print(self.lin, self.col)
         tmp = [self.lin-1, self.col-1] #Not required for low-level matrices
-        ver = [tmp[0]]
-        hor = [tmp[1]]
+        ver = [tmp[0]]  # stores vertical coordinates of the movement
+        hor = [tmp[1]]  # stores horizontal coordinates of the movement
         while tmp != [0, 0] and tmp[0] != 0 and tmp[1] != 0  :
-            diag = self.content[tmp[0]-1, tmp[1]-1]
-            up = self.content[tmp[0]-1, tmp[1]]
-            left = self.content[tmp[0], tmp[1]-1]
+            diag = "{:.1f}".format(self.content[tmp[0]-1, tmp[1]-1])
+            up = "{:.1f}".format(self.content[tmp[0]-1, tmp[1]])
+            left = "{:.1f}".format(self.content[tmp[0], tmp[1]-1])
+            print(diag,up,left)
             prev = []
             if max(diag, up, left) == diag:
                 tmp = [tmp[0]-1, tmp[1]-1]
@@ -77,12 +99,12 @@ class prog_dynam_matrix:
                 tmp = [tmp[0], tmp[1]-1]
             ver.append(tmp[0])
             hor.append(tmp[1])
-        if tmp != [0, 0] and tmp[0] == 0:
+        if tmp != [0, 0] and tmp[0] == 0:   #if we reach the 1st line
             while tmp[1] != 0:
                 tmp[1] -= 1
                 ver.append('-')
                 hor.append(tmp[1])
-        elif tmp != [0,0] and tmp[1] == 0:
+        elif tmp != [0,0] and tmp[1] == 0:  #if we reach the first column
             while tmp[0] != 0:
                 tmp[0] -= 1
                 hor.append('-')
@@ -108,7 +130,10 @@ class prog_dynam_matrix:
             else:
                 alignment[1].append(self.columns[i])
             prev_hor = i
-        print(''.join(alignment[0]) + '\n' + ''.join(alignment[1]))
+        ''.join(alignment[0])
+        ''.join(alignment[1])
+        for i in range(len(alignment[0])):
+            print(alignment[0][i], alignment[1][i])
 
     def show(self): #method that displays the matrix with its contents
         with pd.option_context('display.max_rows', None, 'display.max_columns', None):
@@ -120,10 +145,10 @@ if __name__ == "__main__":
                     'C','C','C','C','C']
     data_series2 = ['T','T','T','T','C','C','C','C','C','C','C','C','C','C','C',
                     'C']
-    score_mat = {'gap':-1,'AT':2,'AA':4,'AG':1,'AC':1,
-                    'TA':2,'TT':4,'TG':1,'TC':0,
-                    'GG':6,'GA':1,'GC':5,'GT':1,
-                    'CA':1,'CC':5,'CT':0,'CG':5}
+    score_mat = {'gap':-1,'A_T':2,'A_A':4,'A_G':1,'A_C':1,
+                    'T_A':2,'T_T':4,'T_G':1,'T_C':0,
+                    'G_G':6,'G_A':1,'G_C':5,'G_T':1,
+                    'C_A':1,'C_C':5,'C_T':0,'C_G':5}
     fixed_pos = [10,7]
     example1 = prog_dynam_matrix(data_series2, data_series1)
     example1.create_content()

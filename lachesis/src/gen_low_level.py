@@ -4,7 +4,7 @@ for double dynamic programming, using previously written codes
 
 Usage:
     
-    python3 gen_low_level.py
+    python3 gen_low_level.py pdb_file.pdb seq_file.fasta dope_file.par
 
 or
 
@@ -29,13 +29,12 @@ import copy
 
 def generate_low(mat_col, query, dope_file):
     template_length = len(mat_col.iloc[0, :])
-    mat_names = {}
+    mat_names = {'gap' : -2}
     for i,res in enumerate(query): #Fixing res in pos
         for pos in range(template_length):
-            mat_name = res + str(pos)
-            tmp_score = placeholder(res, i, pos, query, template_length, dope_file, mat_col)
+            mat_name = res + "_" + str(pos)   #name of the low_level matrix
+            tmp_score = gen_low_score(res, i, pos, query, template_length, dope_file, mat_col) #get the score matrix of the low-level matrix
             tmp_mat = prog_dynam_matrix(list(range(template_length)), query)
-            print(tmp_mat.lines, tmp_mat.columns)
             tmp_mat.create_content()
             tmp_mat.fill_up(tmp_score, [pos+1, i+1])
             tmp_mat.show()
@@ -44,21 +43,17 @@ def generate_low(mat_col, query, dope_file):
     return mat_names
 
 
-def placeholder(res, i, pos, query, template_length, dope_file, mat_col):
+def gen_low_score(res, i, pos, query, template_length, dope_file, mat_col):
     query_copy = copy.deepcopy(query)
     del query_copy[i]
-    output = {'gap':0}
+    output = {'gap':-2}
     with open(dope_file, "r") as filin:    
         lines = filin.readlines()
         for line in lines:
             tmp = line.split()
-            if tmp[0] != res:
-                pass
-            for j in range(template_length):
-                if j == pos:
-                    output[tmp[2]+str(j)] = 0
-                    continue
-                output[tmp[2]+str(j)] = float(tmp[mat_col.iloc[pos,j]]) * (-1)
+            if tmp[0] == res[0:3]:
+                for j in range(template_length):
+                    output[tmp[2]+ "_" +str(j)] = float(tmp[mat_col.iloc[pos,j] + 4]) * (-1) #inverse the DOPE potentials
     return output
 
 if __name__ == '__main__':

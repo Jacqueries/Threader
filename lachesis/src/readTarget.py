@@ -4,14 +4,14 @@ from Bio import SeqIO
 
 
 def readTargSeq(seq):
-    tlCode = {"A": "ALA", "R":"ARG", "N":"ASN", "D":"ASP", "C":"CYS", "E":"GLU", "Q":"GLN", "G":"GLY", "H":"HIS", "I":"ILE", "L":"LEU", "K":"LYS", "M":"MET", "F":"PHE", "P":"PRO", "S":"SER", "T":"THR", "W":"TRP", "Y":"TYR", "V":"VAL"}
-
+    tlCode = {"A": ["ALA",0], "R":["ARG",0], "N":["ASN",0], "D":["ASP",0], "C":["CYS",0], "E":["GLU",0], "Q":["GLN",0], "G":["GLY",0], "H":["HIS",0], "I":["ILE",0], "L":["LEU",0], "K":["LYS",0], "M":["MET",0], "F":["PHE",0], "P":["PRO",0], "S":["SER",0], "T":["THR",0], "W":["TRP",0], "Y":["TYR",0], "V":["VAL",0]}
     for record in SeqIO.parse(seq, "fasta"):
         pass
     nseq = str(record.seq)
     seqT = []	
     for letter in nseq:
-        seqT.append(tlCode[letter])
+        tlCode[letter][1] += 1
+        seqT.append(tlCode[letter][0] + "_" + str(tlCode[letter][1])) # to identify repeating residues
     return(seqT)
 
 
