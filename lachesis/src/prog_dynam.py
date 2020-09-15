@@ -36,7 +36,9 @@ class prog_dynam_matrix:
     def create_content(self): #method that initialises the matrix
         self.content = np.zeros((self.lin, self.col), dtype = int)
         
-    def fill_up(self, score_mat, checkpoint):   #method that fills the matrix up
+    def fill_up(self, score_mat, checkpoint = None):   #method that fills the matrix up
+        if checkpoint == None:
+            checkpoint = [self.lin-1, self.col-1]
         gaps = score_mat['gap']
         for i in range(1, checkpoint[0]+1):
             for j in range(1, checkpoint[1]+1):
@@ -44,18 +46,22 @@ class prog_dynam_matrix:
                                         + self.content[i-1, j-1], 
                                         self.content[i-1, j] + gaps, 
                                         self.content[i, j-1] + gaps)
-        for i in range(checkpoint[0], self.lin):
-            for j in range(checkpoint[1], self.col):
-                self.content[i, j] += max(score_mat[self.lines[i] + self.columns[j]]
-                                        + self.content[i-1, j-1], 
-                                        self.content[i-1, j] + gaps, 
-                                        self.content[i, j-1] + gaps)
-                if i == (self.lin-1) and j == (self.col-1):
-                    self.output = self.content[i,j]
+        if checkpoint == [self.lin-1, self.col-1]:
+            pass
+        else:
+            for i in range(checkpoint[0], self.lin):
+                for j in range(checkpoint[1], self.col):
+                   self.content[i, j] += max(score_mat[self.lines[i] + self.columns[j]]
+                                           + self.content[i-1, j-1], 
+                                           self.content[i-1, j] + gaps, 
+                                           self.content[i, j-1] + gaps)
+                   if i == (self.lin-1) and j == (self.col-1):
+                       self.output = self.content[i,j]
     
     
     def optimal_path(self): #method that returns 1 POSSIBLE optimal path
-        tmp = [self.lin-1, self.col-1]
+        print(self.lin, self.col)
+        tmp = [self.lin-1, self.col-1] #Not required for low-level matrices
         ver = [tmp[0]]
         hor = [tmp[1]]
         while tmp != [0, 0] and tmp[0] != 0 and tmp[1] != 0  :
@@ -72,8 +78,10 @@ class prog_dynam_matrix:
             ver.append(tmp[0])
             hor.append(tmp[1])
         alignment = [[],[]]
-        prev_ver = 0
-        prev_hor = 0
+        prev_ver = -1
+        prev_hor = -1
+        ver.reverse()
+        hor.reverse()
         for i in ver:
             if prev_ver == i:
                 alignment[0].append('-')
@@ -89,7 +97,8 @@ class prog_dynam_matrix:
         print(''.join(alignment[0]) + '\n' + ''.join(alignment[1]))
 
     def show(self): #method that displays the matrix with its contents
-        print(pd.DataFrame(self.content, columns = self.columns, index = self.lines))
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+            print(pd.DataFrame(self.content, columns = self.columns, index = self.lines))
 
 
 if __name__ == "__main__":
@@ -101,7 +110,7 @@ if __name__ == "__main__":
                     'TA':2,'TT':4,'TG':1,'TC':0,
                     'GG':6,'GA':1,'GC':5,'GT':1,
                     'CA':1,'CC':5,'CT':0,'CG':5}
-    fixed_pos = [10,8]
+    fixed_pos = [10,7]
     example1 = prog_dynam_matrix(data_series2, data_series1)
     example1.create_content()
     example1.fill_up(score_mat, fixed_pos)
