@@ -2,14 +2,14 @@ import sys
 import re
 def read_coord_PDB(nomfichier):
     """
-    Read pdb template file and retreive Calphas coordinates.
+    	Read pdb template file and retreive Calphas coordinates.
     Args : PDB filename
     Output : dictionnary with position : list of coordinates
     """
     position=[]
     with open(nomfichier,'r') as file:
         for line in file:
-            if re.search("^ATOM",line):
+            if re.search("^ATOM",line) and line[13:15] == "CA":
                 x = float(line[32:38])
                 y = float(line[40:46])
                 z = float(line[48:54])
