@@ -1,0 +1,10 @@
+name: lachesis
+channels:
+    - defaults
+    - conda-forge
+dependencies:
+    - python=3.6.9
+    - numpy
+    - pandas
+    - Bio
+    - re
