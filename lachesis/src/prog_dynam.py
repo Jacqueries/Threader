@@ -64,8 +64,8 @@ class prog_dynam_matrix:
                                            + self.content[i-1, j-1], 
                                            self.content[i-1, j] + gaps, 
                                            self.content[i, j-1] + gaps)
-                if i == (self.lin-1) and j == (self.col-1):
-                    self.output = self.content[i,j]
+        if i == (self.lin-1) and j == (self.col-1):
+            self.output = self.content[i,j]
     
     
     def fill_high(self, score_mat):
@@ -86,10 +86,10 @@ class prog_dynam_matrix:
         ver = [tmp[0]]  # stores vertical coordinates of the movement
         hor = [tmp[1]]  # stores horizontal coordinates of the movement
         while tmp != [0, 0] and tmp[0] != 0 and tmp[1] != 0  :
-            diag = "{:.1f}".format(self.content[tmp[0]-1, tmp[1]-1])
-            up = "{:.1f}".format(self.content[tmp[0]-1, tmp[1]])
-            left = "{:.1f}".format(self.content[tmp[0], tmp[1]-1])
-            print(diag,up,left)
+            diag = "{:.3f}".format(self.content[tmp[0]-1, tmp[1]-1])
+            up = "{:.3f}".format(self.content[tmp[0]-1, tmp[1]])
+            left = "{:.3f}".format(self.content[tmp[0], tmp[1]-1])
+            
             prev = []
             if max(diag, up, left) == diag:
                 tmp = [tmp[0]-1, tmp[1]-1]

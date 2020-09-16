@@ -10,10 +10,6 @@ or
 
     from gen_low_level import *
 
-
-In Distance matrix, replace the distances with the associated column of the DOPE file
-
-
 """
 
 __authors__ = ("Apollinaire Roubert", "Ilyas Granguillaume")
@@ -28,7 +24,7 @@ from readTarget import *
 import copy
 
 def generate_low(mat_col, query, dope_file):
-        """Generate all low level matrices
+    """Generate all low level matrices
     Args :
 	-query: sequence to thread
 	-dope_file: self expl
@@ -36,7 +32,7 @@ def generate_low(mat_col, query, dope_file):
     Return dictionnary in the form of key : AA_n°_position and value : alignment final score
     """
     template_length = len(mat_col.iloc[0, :])
-    mat_names = {'gap' : -2}
+    mat_names = {'gap' : -5}
     for i,res in enumerate(query): #Fixing res in pos
         for pos in range(template_length):
             mat_name = res + "_" + str(pos)   #name of the low_level matrix
@@ -65,7 +61,7 @@ def gen_low_score(res, i, pos, query, template_length, dope_file, mat_col):
     """
     query_copy = copy.deepcopy(query)
     del query_copy[i] # unused
-    output = {'gap':-2} # command line
+    output = {'gap':-5} # command line
     with open(dope_file, "r") as filin:    
         lines = filin.readlines()
         for line in lines: # retreive all possible pairings with 20 aas 

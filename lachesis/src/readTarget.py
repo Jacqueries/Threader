@@ -15,7 +15,10 @@ def readTargSeq(seq):
     nseq = str(record.seq)
     seqT = []	
     for letter in nseq:
+        if letter == 'X':
+            continue
         tlCode[letter][1] += 1
+      
         seqT.append(tlCode[letter][0] + "_" + str(tlCode[letter][1])) # to identify repeating residues
     return(seqT)
 

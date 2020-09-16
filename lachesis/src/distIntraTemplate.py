@@ -25,7 +25,8 @@ def create_DistMat(pos):
     df = pd.DataFrame(np.zeros( (npos,npos) ) )
     for i in range(npos):
         for j in range(npos):
-            df.iloc[i,j] = dist_pos(pos[i],pos[j])	
+            df.iloc[i,j] = dist_pos(pos[i],pos[j])
+    print(df)	
     return create_colmat(df)
 
 def which_col(dist, steps):

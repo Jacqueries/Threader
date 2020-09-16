@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if len(sys.argv)>1 and sys.argv[1]=='help':
         print(__doc__)
     else:
-    	template = pP.read_coord_PDB(sys.argv[1])
+        template = pP.read_coord_PDB(sys.argv[1])
         mat_col = create_DistMat(template)
         query = readTargSeq(sys.argv[2])
         mat_score = generate_low(mat_col, query, sys.argv[3])
