@@ -20,13 +20,11 @@ def create_DistMat(pos):
         Args:
             -pos: coordinates of all CA position in template
     """
-    print(len(pos))
     npos = len(pos)
     df = pd.DataFrame(np.zeros( (npos,npos) ) )
     for i in range(npos):
         for j in range(npos):
             df.iloc[i,j] = dist_pos(pos[i],pos[j])
-    print(df)	
     return create_colmat(df)
 
 def which_col(dist, steps):

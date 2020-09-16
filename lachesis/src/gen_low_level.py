@@ -32,7 +32,7 @@ def generate_low(mat_col, query, dope_file):
     Return dictionnary in the form of key : AA_n°_position and value : alignment final score
     """
     template_length = len(mat_col.iloc[0, :])
-    mat_names = {'gap' : -5}
+    mat_names = {'gap' : -3}
     for i,res in enumerate(query): #Fixing res in pos
         for pos in range(template_length):
             mat_name = res + "_" + str(pos)   #name of the low_level matrix
@@ -40,8 +40,6 @@ def generate_low(mat_col, query, dope_file):
             tmp_mat = prog_dynam_matrix(list(range(template_length)), query)
             tmp_mat.create_content()
             tmp_mat.fill_up(tmp_score, [pos+1, i+1])
-            tmp_mat.show()
-            tmp_mat.optimal_path()
             mat_names[mat_name] = tmp_mat.output
     return mat_names
 
@@ -61,7 +59,7 @@ def gen_low_score(res, i, pos, query, template_length, dope_file, mat_col):
     """
     query_copy = copy.deepcopy(query)
     del query_copy[i] # unused
-    output = {'gap':-5} # command line
+    output = {'gap':-3} # command line
     with open(dope_file, "r") as filin:    
         lines = filin.readlines()
         for line in lines: # retreive all possible pairings with 20 aas 
@@ -77,7 +75,6 @@ if __name__ == '__main__':
     else:
     	template = pP.read_coord_PDB(sys.argv[1])
     	mat_col = create_DistMat(template)
-    	print(mat_col)
     	query = readTargSeq(sys.argv[2])
     	generate_low(mat_col, query, sys.argv[3])
     

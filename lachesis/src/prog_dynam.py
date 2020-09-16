@@ -81,34 +81,32 @@ class prog_dynam_matrix:
                     self.output = self.content[i,j]                            
     
     def optimal_path(self): #method that returns 1 POSSIBLE optimal path
-        print(self.lin, self.col)
-        tmp = [self.lin-1, self.col-1] #Not required for low-level matrices
-        ver = [tmp[0]]  # stores vertical coordinates of the movement
-        hor = [tmp[1]]  # stores horizontal coordinates of the movement
-        while tmp != [0, 0] and tmp[0] != 0 and tmp[1] != 0  :
-            diag = "{:.3f}".format(self.content[tmp[0]-1, tmp[1]-1])
-            up = "{:.3f}".format(self.content[tmp[0]-1, tmp[1]])
-            left = "{:.3f}".format(self.content[tmp[0], tmp[1]-1])
+        curr = [self.lin-1, self.col-1] #Not required for low-level matrices
+        ver = [curr[0]]  # stores vertical coordinates of the movement
+        hor = [curr[1]]  # stores horizontal coordinates of the movement
+        while curr != [0, 0] and curr[0] != 0 and curr[1] != 0  :
+            diag = self.content[curr[0]-1, curr[1]-1]
+            up = self.content[curr[0]-1, curr[1]]
+            left = self.content[curr[0], curr[1]-1]
             
-            prev = []
             if max(diag, up, left) == diag:
-                tmp = [tmp[0]-1, tmp[1]-1]
+                curr = [curr[0]-1, curr[1]-1]
             elif max(diag, up, left) == up:
-                tmp = [tmp[0]-1, tmp[1]]
+                curr = [curr[0]-1, curr[1]]
             else:
-                tmp = [tmp[0], tmp[1]-1]
-            ver.append(tmp[0])
-            hor.append(tmp[1])
-        if tmp != [0, 0] and tmp[0] == 0:   #if we reach the 1st line
-            while tmp[1] != 0:
-                tmp[1] -= 1
-                ver.append('-')
-                hor.append(tmp[1])
-        elif tmp != [0,0] and tmp[1] == 0:  #if we reach the first column
-            while tmp[0] != 0:
-                tmp[0] -= 1
-                hor.append('-')
-                ver.append(tmp[0])
+                curr = [curr[0], curr[1]-1]
+            ver.append(curr[0])
+            hor.append(curr[1])
+        if curr != [0, 0] and curr[0] == 0:   #if we reach the 1st line
+            while curr[1] != 0:
+                curr[1] -= 1
+                ver.append(curr[0])
+                hor.append(curr[1])
+        elif curr != [0,0] and curr[1] == 0:  #if we reach the first column
+            while curr[0] != 0:
+                curr[0] -= 1
+                hor.append(curr[1])
+                ver.append(curr[0])
         alignment = [[],[]]
         prev_ver = -1
         prev_hor = -1
@@ -117,15 +115,11 @@ class prog_dynam_matrix:
         for i in ver:
             if prev_ver == i:
                 alignment[0].append('-')
-            elif i == '-':
-                alignment[0].append('-')
             else:
                 alignment[0].append(str(self.lines[i]))
             prev_ver = i
         for i in hor:
             if prev_hor == i:
-                alignment[1].append('-')
-            elif i == '-':
                 alignment[1].append('-')
             else:
                 alignment[1].append(self.columns[i])
